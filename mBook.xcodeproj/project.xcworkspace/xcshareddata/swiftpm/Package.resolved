@@ -2,12 +2,30 @@
   "object": {
     "pins": [
       {
+        "package": "PartialSheet",
+        "repositoryURL": "https://github.com/AndreaMiotto/PartialSheet.git",
+        "state": {
+          "branch": null,
+          "revision": "9b905dcaeedb96d8c1793de945489ed76df6754f",
+          "version": "2.1.6"
+        }
+      },
+      {
         "package": "SDWebImage",
         "repositoryURL": "https://github.com/SDWebImage/SDWebImage.git",
         "state": {
           "branch": null,
           "revision": "f876da50318666141d72963e1568afee6f84f008",
           "version": "5.8.3"
+        }
+      },
+      {
+        "package": "SDWebImageSVGCoder",
+        "repositoryURL": "https://github.com/SDWebImage/SDWebImageSVGCoder.git",
+        "state": {
+          "branch": null,
+          "revision": "9de72b862ca813464c9b2780146f29dc72aebc8e",
+          "version": "1.5.0"
         }
       },
       {

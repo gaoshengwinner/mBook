@@ -22,7 +22,7 @@ struct BottomTabListResource{
     let bottomColor: UIColor
     init() {
         self.bottomTabResource = BottomTabListResource.getBottomTabResource()
-        self.bottomColor = MBUIColor.Color(color: .Yellow)
+        self.bottomColor = MBUIColor.getUIColor(color: .Yellow)
     }
     
     

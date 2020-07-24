@@ -9,8 +9,24 @@
 import SwiftUI
 
 struct MainView: View {
+    @State var isLogout = false
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack{
+            if self.isLogout {
+                LoginView()
+            } else {
+                VStack{
+                    Button(action: {
+                        Token.deleteToken()
+                        self.isLogout.toggle()
+                    })
+                    {
+                        Text("Logout")
+                    }
+                    Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+                }
+            }
+        }
     }
 }
 

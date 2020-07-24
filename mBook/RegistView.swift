@@ -18,7 +18,7 @@ struct RegistView: View {
     @State var conMailcode: String = ""
     @State var errmsMeil:String = ""
     @State var errmsPSW:String = ""
-     @State var errmsCode:String = ""
+    @State var errmsCode:String = ""
     
     @State var isGotoLogin = false
     @State var isConfirmMail = false
@@ -29,16 +29,31 @@ struct RegistView: View {
             if self.isGotoLogin {
                 LoginView()
             } else {
-                if self.isConfirmMail {
-                    self.conMailView
-                } else {
-                    self.registView
+                VStack{
+                    Button(action: {
+                        self.isGotoLogin.toggle()
+                    }, label: {
+                        
+                        Image(systemName: "arrow.left.circle.fill")
+                            .font(.largeTitle)
+                            .foregroundColor(.blue)
+                        Spacer()
+                        }
+                    ).padding(paddingVale)
+                    
+                    if self.isConfirmMail {
+                        self.conMailView
+                    } else {
+                        
+                        self.registView
+                    }
                 }
             }
         }
     }
     
     var conMailView : some View {
+        
         VStack {
             VStack{
                 Text("すでにご入力したメールアドレスに送信したコードを入力してください。").foregroundColor(.blue)
@@ -46,7 +61,7 @@ struct RegistView: View {
                     TextField("コード", text: Binding(
                         get:{
                             return self.conMailcode
-                            },
+                    },
                         set:{(newValue) in
                             if newValue != "" {
                                 self.isNotCanRegeist = false
@@ -72,8 +87,12 @@ struct RegistView: View {
                         APIHelper.postRegistOK(code: self.conMailcode,ok:{
                             self.isGotoLogin = true
                         },ng: {result in
-                            for err in result.errs {
-                                self.errmsCode = "※" + err.msg
+                            if result == nil {
+                                self.errmsCode = "※予想外エラー"
+                            } else {
+                                for err in result!.errs {
+                                    self.errmsCode = "※" + err.msg
+                                }
                             }
                         })
                         
@@ -96,18 +115,9 @@ struct RegistView: View {
                     .disabled(self.isNotCanRegeist)
                 }
                 Spacer()
-                HStack{
-                    Button(action: {
-                        self.isGotoLogin = true
-                    }) {
-                        Text("<<すでにアカウントを持ちですか？")
-                        
-                    }
-                    .foregroundColor(Color.blue)
-                    Spacer()
-                }
+               
             }.padding(paddingVale)
-        }.padding(.top, 100)
+        }.padding(.top, 70)
     }
     
     var registView : some View {
@@ -129,8 +139,8 @@ struct RegistView: View {
                         Text(self.errmsMeil).foregroundColor(.red)
                         Spacer()
                     }
-                    Text("ログイン時や、パスワードをリセットする場合に、このメールを使用します。")
-                        .fontWeight(.thin)
+                    //Text("ログイン時や、パスワードをリセットする場合に、このメールを使用します。")
+                    //    .fontWeight(.thin)
                 }
                 VStack(spacing:0){
                     SecureField("パスワード", text: $password)
@@ -142,8 +152,8 @@ struct RegistView: View {
                         Text(self.errmsPSW).foregroundColor(.red)
                         Spacer()
                     }
-                    Text("半角英数字もしくは記号を２つ以上含む８〜２０文字")
-                        .fontWeight(.thin)
+                    //Text("半角英数字もしくは記号を２つ以上含む８〜２０文字")
+                    //    .fontWeight(.thin)
                 }
                 
                 
@@ -159,13 +169,17 @@ struct RegistView: View {
                         },ng: {result in
                             self.errmsMeil = ""
                             self.errmsPSW = ""
-                            for err in result.errs {
-                                if APIResult.ERR_FIELD_MAIL == err.errField {
-                                    self.errmsMeil = "※" + err.msg
-                                }
-                                
-                                if APIResult.ERR_FIELD_PSW == err.errField {
-                                    self.errmsPSW = "※" + err.msg
+                            if result == nil {
+                                self.errmsMeil = "※ 予想外異常"
+                            } else {
+                                for err in result!.errs {
+                                    if APIResult.ERR_FIELD_MAIL == err.errField {
+                                        self.errmsMeil = "※" + err.msg
+                                    }
+                                    
+                                    if APIResult.ERR_FIELD_PSW == err.errField {
+                                        self.errmsPSW = "※" + err.msg
+                                    }
                                 }
                             }
                             
@@ -188,22 +202,11 @@ struct RegistView: View {
                 .padding(.top, 10.0)
                 
                 Spacer()
-                HStack{
-                    Button(action: {
-                        self.isGotoLogin = true
-                    }) {
-                        Text("<<すでにアカウントを持ちですか？")
-                            .frame(height: lineHeight)
-                    }
-                        
-                    .foregroundColor(Color.blue)
-                    
-                    Spacer()
-                }
+                
                 
             }.padding(paddingVale)
         }
-        .padding(.top, 100)
+        .padding(.top, 70)
     }
 }
 

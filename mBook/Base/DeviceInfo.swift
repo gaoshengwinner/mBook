@@ -21,6 +21,11 @@ struct DeviceInfo: Codable {
         let data = try! encode.encode(self)
         return String(data:data,encoding: .utf8)!
     }
+    
+    func getJsoBase64Encode() -> String{
+        return getJson().data(using: .utf8)!.base64EncodedString()
+        
+    }
  
 }
 

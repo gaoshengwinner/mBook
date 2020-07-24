@@ -7,109 +7,141 @@
 //
 
 import SwiftUI
-
+enum HttpMethod :String {
+    case POST = "POST"
+    case GET = "GET"
+}
 public class APIHelper {
-    static let BASE_API_URL = "http://3a6e6043c414.ngrok.io"
+    static let BASE_API_URL = "http://889ebddc00eb.ngrok.io"
     
-    static func postRegist(username:String, password:String,ok:@escaping()->Void,ng:@escaping(_ APIResult:APIResult)->Void) {
+    static let CONTENT_TYPE = "application/json; charset=utf-8"
+    static let MB_DEVICE_INFOR_HEADER = "MB_DEVICE_INFOR_HEADER"
+    
+    
+    static func postRegist(username:String, password:String,ok:@escaping()->Void,ng:@escaping(_ APIResult:APIResult?)->Void) {
+        let body = ["memberEmail":username,
+                    "memberPassword":password,
+                    "memberPasswordcf":password]
         
         let url = URL(string: BASE_API_URL + "/v1/api/member/regist")
-        var request = URLRequest(url: url!)
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.setValue(DeviceHelper.getDeviceInfo().getJson(), forHTTPHeaderField: "MB_DEVICE_INFOR_HEADER")
         
-        let body = """
-        {"memberEmail":"\(username)", "memberPassword":"\(password)", "memberPasswordcf":"\(password)"}
-        """
+        let data : Data! = try? JSONSerialization.data(withJSONObject: body, options: []) as Data?
         
-        request.httpBody = body.data(using: .utf8)
-        
-        request.httpMethod = "POST"
-        let session = URLSession.shared
-        session.dataTask(with: request) { (data, response, error) in
-            if error == nil, let data = data, let response = response as? HTTPURLResponse {
-                
-                // HTTPヘッダの取得
-                print("Content-Type: \(response.allHeaderFields["Content-Type"] ?? "")")
-                // HTTPステータスコード
-                print("statusCode: \(response.statusCode)")
-                print(String(data: data, encoding: String.Encoding.utf8) ?? "")
-                
-                let result = APIResult.getAPIResult(data:data)
-                if result.statu == APIResult.IS_OK || result.statu == "" {
-                    print("OK")
-                    ok();
-                } else {
-                    print("NG")
-                    ng(result)
-                }
+        doApi(url:url!, method: HttpMethod.POST, body:data, whenOK: { data, statusCode in
+            ok()
+        },whenNG: { data, error,statusCode  in
+            if data == nil{
+                ng(nil)
             } else {
-                print(error ?? "")
+                ng(APIResult.getAPIResult(data:data!))
             }
-        }.resume()
+        })
+        
     }
     
-    static func postRegistOK(code:String,ok:@escaping()->Void,ng:@escaping(_ APIResult:APIResult)->Void) {
+    
+    static func postRegistOK(code:String,ok:@escaping()->Void,ng:@escaping(_ APIResult:APIResult?)->Void) {
+        
+        let body = ["code":code]
+        
+        let data : Data! = try? JSONSerialization.data(withJSONObject: body, options: []) as Data?
         
         let url = URL(string: BASE_API_URL + "/v1/api/member/regist_mailcf")
-        var request = URLRequest(url: url!)
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.setValue(DeviceHelper.getDeviceInfo().getJson(), forHTTPHeaderField: "MB_DEVICE_INFOR_HEADER")
         
-        let body = """
-        {"code":"\(code)"}
-        """
+        doApi(url:url!, method: HttpMethod.POST, body:data, whenOK: { data, statusCode in
+            ok()
+        },whenNG: { data, error,statusCode  in
+            if data == nil{
+                ng(nil)
+            } else {
+                ng(APIResult.getAPIResult(data:data!))
+            }
+        })
+    }
+    
+    static func login(memberEmail:String,
+                      memberPassword:String,ok:@escaping(_ loginResult:LoginResult)->Void,ng:@escaping(_ loginResult:LoginResult?)->Void) {
+        let url = URL(string: BASE_API_URL + "/v1/api/member/login")
+        let body = ["memberEmail":memberEmail,
+                    "memberPassword":memberPassword]
         
-        request.httpBody = body.data(using: .utf8)
+        let data : Data! = try? JSONSerialization.data(withJSONObject: body, options: []) as Data?
         
-        request.httpMethod = "POST"
+        doApi(url:url!, method: HttpMethod.POST, body:data, whenOK: { data, statusCode in
+            ok(LoginResult.getAPIResult(data: data!)!)
+        },whenNG: { data, error,statusCode  in
+            if data == nil{
+                ng(nil)
+            } else {
+                do{
+                    guard let r =  LoginResult.getAPIResult(data:data!) else{
+                        throw RequestError.netError
+                    }
+                    ng(r)
+                }catch{
+                    ng(nil)
+                }
+            }
+        })
+        
+        
+    }
+    static func doApi(url:URL,
+                      method:HttpMethod,
+                      body:Data?,
+                      whenOK:@escaping(_ responsData:Data?,_ statusCode: Int)->Void,
+                      whenNG:@escaping(_ responsData:Data?, _ error:String?, _ statusCode: Int)->Void)->Void{
+        
+        var request = URLRequest(url: url)
+        request.setValue(CONTENT_TYPE, forHTTPHeaderField: "Content-Type")
+        request.setValue(DeviceHelper.getDeviceInfo().getJsoBase64Encode(), forHTTPHeaderField: MB_DEVICE_INFOR_HEADER)
+        request.httpBody = body
+        request.httpMethod = method.rawValue
         let session = URLSession.shared
+        
         session.dataTask(with: request) { (data, response, error) in
             if error == nil, let data = data, let response = response as? HTTPURLResponse {
-                
-                // HTTPヘッダの取得
-                print("Content-Type: \(response.allHeaderFields["Content-Type"] ?? "")")
                 // HTTPステータスコード
                 print("statusCode: \(response.statusCode)")
                 print(String(data: data, encoding: String.Encoding.utf8) ?? "")
-                
-                let result = APIResult.getAPIResult(data:data)
-                if result.statu == APIResult.IS_OK || result.statu == "" {
-                    print("OK")
-                    ok();
+                        if response.statusCode != 200 {
+                    whenNG(data, nil, response.statusCode)
                 } else {
-                    print("NG")
-                    ng(result)
+                    whenOK(data, response.statusCode)
                 }
             } else {
-                print(error ?? "")
+                let response = response as? HTTPURLResponse
+                whenNG(nil, String(describing: error), response!.statusCode)
             }
+            
         }.resume()
     }
     
-    static func getShopInfo(shopID:String ,ok:@escaping(_ shopInfoResult:ShopInfoResult)->Void,ng:@escaping(_ error: Error?)->Void) {
+    
+    static func getShopInfo(shopID:String ,ok:@escaping(_ shopInfoResult:ShopInfoResult)->Void,ng:@escaping(_ error: String?)->Void) {
+        
         let url = URL(string: BASE_API_URL + "/v1/api/shop/" + shopID)
-        var request = URLRequest(url: url!)
-        request.httpMethod = "GET"
-        let session = URLSession.shared
-        session.dataTask(with: request) { (data, response, error) in
-            if error == nil, let data = data, let response = response as? HTTPURLResponse {
-                // HTTPヘッダの取得
-                print("Content-Type: \(response.allHeaderFields["Content-Type"] ?? "")")
-                // HTTPステータスコード
-                print("statusCode: \(response.statusCode)")
-                print(String(data: data, encoding: String.Encoding.utf8) ?? "")
-                let result = ShopInfoResult.getShopInfoResult(data:data)
-                print("OK")
-                ok(result!);
-            } else {
-                ng(error)
-            }
-        }.resume()
         
+        doApi(url:url!, method: HttpMethod.POST, body:nil, whenOK: { data, statusCode in
+            let result = ShopInfoResult.getShopInfoResult(data:data!)
+            ok(result!);
+        },whenNG: { data, error,statusCode  in
+            if data == nil{
+                ng(nil)
+            } else {
+                ng("通信エラー")
+            }
+        })
         
     }
-    
-    
-    
+
+        
 }
+
+enum RequestError :Error {
+    case netError
+    case serviceError
+    case missingParameter(parameter: String)
+    case isnil
+}
+

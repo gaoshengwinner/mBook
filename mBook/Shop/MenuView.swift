@@ -43,6 +43,7 @@ struct MenuView: View {
 //            ShopHeadView(imegUrl: "https://shinanyaku.com/wp-content/uploads/2018/04/sushiro.png", text: "スシロー",
 //                         backgroundColor: ColorEnum.Beige.rawValue, textForegroundColor: "Red")
             //            YoutubeWebView(url: "https://www.youtube.com/embed/uVBbSrK7Z-8")
+            
             ScrollView{
                 VStack(spacing:5) {
                     

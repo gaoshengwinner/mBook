@@ -9,33 +9,52 @@
 import SwiftUI
 
 struct ShopMainView: View {
-    let shopInfoResult : ShopInfoResult?
+    @State var shopInfoResult : ShopInfoResult?
     @State var selected: Int = 1
+    @State var isLoadOK: Bool = false
+    @State var isError : Bool = false
+    @State var errormsg : String?
     
-    init(shopInfoResult : ShopInfoResult) {
-        self.shopInfoResult = shopInfoResult
-        UITabBar.appearance().backgroundColor = .blue
-    }
-
+    let shopID: String
+    
+    
     var body: some View {
         VStack{
-            
-            // 共通ヘッド
-            ShopHeadView(shopHeadInfo: self.shopInfoResult!.shopHeadInfo!)
-            
-            // ページ設定
-            TabView(selection: $selected){
-                ForEach (0..<self.shopInfoResult!.shopBigPageInfos!.count){ index in
-                    MenuView().tabItem({
-                        Image(systemName: self.shopInfoResult!.shopBigPageInfos![index].imageURL)
-                            .font(.title)
-                        Text(self.shopInfoResult!.shopBigPageInfos![index].title)
-                    }).tag(index)
-                }
-            }.accentColor(.green) //selected color
-            
-            Spacer()
-        }
+            if self.isLoadOK {
+                // ページ設定
+                TabView(selection: $selected){
+                    ForEach (0..<self.shopInfoResult!.shopBigPageInfos!.count){ index in
+                        ShopPageCreatorView(shopBigPageInfo:  self.shopInfoResult!.shopBigPageInfos![index], shopHeadInfo: self.shopInfoResult!.shopHeadInfo)
+                            .tabItem({
+                                Image(systemName: self.shopInfoResult!.shopBigPageInfos![index].imageURL!)
+                                    .font(.title)
+                                Text(self.shopInfoResult!.shopBigPageInfos![index].title!)
+                            }).tag(index)
+                        
+                    }
+                }.accentColor(.green) //selected color
+                
+                Spacer()
+            } else if self.isError{
+                Text(self.errormsg!)
+            } else {
+                Text("Loading...")
+            }
+        }.onAppear(perform: {
+            self.getShopInfo(shopID:self.shopID)
+        })
     }
+    
+    func getShopInfo(shopID:String){
+        APIHelper.getShopInfo(shopID: shopID, ok : { result in
+            self.shopInfoResult = result
+            self.isLoadOK.toggle()
+            
+        } , ng : { error in
+            self.errormsg = error!
+            self.isError.toggle()
+        })
+    }
+    
+    
 }
-

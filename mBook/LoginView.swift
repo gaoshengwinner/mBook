@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct LoginView: View {
-    let loginheaderImage = "loginheader.png"
-    let mBQrcodeImage = "mBQR-Code.png"
+    let loginheaderImage = "loginheader.jpg"
+    let mBQrcodeImage = "loginheader.jpg"
     let paddingVale = CGFloat(20)
     let lineHeight = CGFloat(30)
     @State var username: String = ""
@@ -21,6 +21,8 @@ struct LoginView: View {
     @State var isCanGotoMain = false
     @State var isGotoRegist = false
     @State var isFindPSW = false
+    @State var errmsMeil:String = ""
+    @State var errmsPSW:String = ""
     
     
     var body: some View {
@@ -29,7 +31,7 @@ struct LoginView: View {
                 FindPSWView()
             }
             else if self.isGotoRegist{
-                    RegistView()
+                RegistView()
             }
             else if self.isCanGotoMain {
                 
@@ -41,6 +43,7 @@ struct LoginView: View {
         }
     }
     var loginView : some View {
+        
         VStack(spacing:5){
             Image(uiImage: UIImage(named: loginheaderImage)! )
                 .resizable()
@@ -50,21 +53,47 @@ struct LoginView: View {
                     TextField("メールアドレス", text: $username)
                         .frame(height: lineHeight)
                         .keyboardType(UIKeyboardType.asciiCapable)
+                    
                     Rectangle()
                         .frame(height: 1.0, alignment: .bottom)
                         .foregroundColor(Color.blue)
+                    HStack{
+                        Text(self.errmsMeil).foregroundColor(.red)
+                        Spacer()
+                    }
                 }
                 VStack(spacing:0){
                     SecureField("パスワード", text: $password)
                         .frame(height: lineHeight)
+                    
                     Rectangle()
                         .frame(height: 1.0, alignment: .bottom)
                         .foregroundColor(Color.blue)
+                    HStack{
+                        Text(self.errmsPSW).foregroundColor(.red)
+                        Spacer()
+                    }
                 }
                 VStack(spacing:0){
                     Button(action: {
-                        self.isCanGotoMain = true
-                        
+                        APIHelper.login(memberEmail: self.username, memberPassword: self.password,ok:{loginResult in
+                            Token.createTokenKeyChain(lr: loginResult)
+                            self.isCanGotoMain.toggle()
+                        },ng:{loginResult in
+                            if loginResult == nil ||  loginResult!.errs == nil{
+                                self.errmsMeil = "※未知例外発生しました。"
+                            } else {
+                                for err in loginResult!.errs! {
+                                    if LoginResult.ERR_FIELD_MAIL == err.errField {
+                                        self.errmsMeil = "※" + err.msg
+                                    }
+                                    
+                                    if LoginResult.ERR_FIELD_PSW == err.errField {
+                                        self.errmsPSW = "※" + err.msg
+                                    }
+                                }
+                            }
+                        })
                     }) {
                         Text("ログイン")
                             .frame(width: UIScreen.main.bounds.width-paddingVale)
@@ -79,7 +108,7 @@ struct LoginView: View {
                         self.isFindPSW = true
                         
                     }) {
-                    Text("パスワードを忘れた場合").foregroundColor(.blue).padding(.top, 10.0)
+                        Text("パスワードを忘れた場合").foregroundColor(.blue).padding(.top, 10.0)
                     }
                 }
                 VStack(spacing:0){
@@ -120,10 +149,10 @@ struct LoginView: View {
                     }) {
                         Text("新しいアカウントを作成＞＞")
                             .foregroundColor(.blue)
-                        
+                            
                             .frame(height: lineHeight)
                     }
-                    //.background(Color.blue.opacity(0.5))
+                        //.background(Color.blue.opacity(0.5))
                         .foregroundColor(Color.blue)
                 }
             }.padding(paddingVale)
@@ -143,6 +172,7 @@ struct LoginView: View {
         }
         )
     }
+    
 }
 
 struct LoginView_Previews: PreviewProvider {

@@ -10,44 +10,49 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct ShopHeadView: View {
-    let height : CGFloat
+    let height : CGFloat = 50
     
     var shopHeadInfo :ShopHeadInfo
     init(shopHeadInfo : ShopHeadInfo) {
         self.shopHeadInfo = shopHeadInfo
-        self.height = CGFloat(UIScreen.main.bounds.width * shopHeadInfo.heightScale)
+        
+        if !self.shopHeadInfo.backgroundColor!.isEmpty {
+        UINavigationBar.appearance().backgroundColor = MBUIColor.getUIColor(color: self.shopHeadInfo.backgroundColor)
+        }
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+        let barAppearance =  UINavigationBarAppearance()
+                           barAppearance.configureWithDefaultBackground()
+        UINavigationBar.appearance().scrollEdgeAppearance = barAppearance
+        
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 25)]
+
+        UINavigationBar.appearance().isHidden = true
     }
     
     var body: some View {
         VStack{
-            
             HStack{
-                Spacer()
-                if !self.shopHeadInfo.imegUrl.isEmpty {
-                    WebImage(url: URL(string: self.shopHeadInfo.imegUrl))
+                if !self.shopHeadInfo.imegUrl!.isEmpty {
+                    WebImage(url: URL(string: self.shopHeadInfo.imegUrl!))
                         .placeholder(content: {
                             Color.gray
                         })
                         .resizable()
                         .scaledToFill()
-                        .frame(maxHeight: height)
-                        .clipped()
+                        .frame(width: UIScreen.main.bounds.width)
+                        .frame(maxHeight: 50)
+                    .clipped()
                 }
-                else if !self.shopHeadInfo.text.isEmpty {
-                    Text(self.shopHeadInfo.text)
-                        .frame(height: 40)
+                else if !self.shopHeadInfo.text!.isEmpty {
+                    Text(self.shopHeadInfo.text!)
                         .font(.largeTitle)
-//                    .background(Color.gray.opacity(0.1))
-//                        .foregroundColor(
-//                            self.shopHeadInfo.textForegroundColor.isEmpty ? nil :
-//                                Color(MBUIColor.Color(color: ColorEnum(rawValue: self.shopHeadInfo.textForegroundColor)!)))
-                    
+                        .foregroundColor(Color(MBUIColor.getUIColor(color: self.shopHeadInfo.textForegroundColor)))
+                    //.frame(width: UIScreen.main.bounds.width)
+                        
                 }
                 Spacer()
             }
         }
-        //.background(self.shopHeadInfo.backgroundColor.isEmpty ? nil : Color(MBUIColor.Color(color: ColorEnum(rawValue: self.shopHeadInfo.backgroundColor)!)))
-        .frame(height: 40)
         
     }
 }

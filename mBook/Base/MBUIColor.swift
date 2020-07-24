@@ -469,7 +469,17 @@ enum ColorEnum: String
 //let anEnum = ColorEnum(rawValue: "one")!
 
 struct MBUIColor {
-    static func Color(color: ColorEnum)->UIColor{
+    static func getColor(color:String?)->Color?{
+        return color == nil ?
+            nil:
+            Color( MBUIColor.getUIColor(color: ColorEnum(rawValue: color!)!))
+    }
+    static func getUIColor(color: String?)->UIColor{
+        return (color == nil ?
+            nil:
+            MBUIColor.getUIColor(color: ColorEnum(rawValue: color!)!))!
+    }
+    static func getUIColor(color: ColorEnum)->UIColor{
         switch color {
         case ColorEnum.Snow:return UIColor(red:255,green: 250,blue: 250, alpha:1.0)
         case ColorEnum.GhostWhite:return UIColor(red:248,green: 248,blue: 255, alpha:1.0)
@@ -927,8 +937,8 @@ struct MBUIColor {
         case ColorEnum.DarkMagenta:return UIColor(red:139,green: 0,blue: 139, alpha:1.0)
         case ColorEnum.DarkRed:return UIColor(red:139,green: 0,blue: 0, alpha:1.0)
         case ColorEnum.LightGreen:return UIColor(red:144,green: 238,blue: 144, alpha:1.0)
-//        default:
-//            return UIColor(red:255, green:255, blue: 255, alpha:1.0)
+            //        default:
+            //            return UIColor(red:255, green:255, blue: 255, alpha:1.0)
         }
     }
     

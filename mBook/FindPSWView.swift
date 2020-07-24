@@ -26,40 +26,45 @@ struct FindPSWView: View {
     }
     var findPSWView: some View {
         VStack{
-            Text("ご登録した時に使用したメールアドレスを入力してください。").foregroundColor(.blue)
-            VStack(spacing:0){
-                TextField("メールアドレス", text: $username)
-                    .frame(height: lineHeight)
-                    .keyboardType(UIKeyboardType.asciiCapable)
-                Rectangle()
-                    .frame(height: 1.0, alignment: .bottom)
-                    .foregroundColor(Color.blue)
-            }
-            
-            Button(action: {
-              
-            }) {
-                Text("送信")
-                    .frame(width: UIScreen.main.bounds.width-paddingVale)
-                    .frame(height: lineHeight)
-            }
-            .background(Color.blue)
-            .foregroundColor(Color.white)
-            .cornerRadius(lineHeight/2)
-            
-            Spacer()
             HStack{
+                Button(action: {
+                    self.isGotoLogin.toggle()
+                }, label: {
+                    
+                    Image(systemName: "arrow.left.circle.fill")
+                        .font(.largeTitle)
+                        .foregroundColor(.blue)
+                    Spacer()
+                    }
+                )
+            }.padding(paddingVale)
+            VStack{
+                Text("ご登録した時に使用したメールアドレスを入力してください。").foregroundColor(.blue)
+                VStack(spacing:0){
+                    TextField("メールアドレス", text: $username)
+                        .frame(height: lineHeight)
+                        .keyboardType(UIKeyboardType.asciiCapable)
+                    Rectangle()
+                        .frame(height: 1.0, alignment: .bottom)
+                        .foregroundColor(Color.blue)
+                }
                 
                 Button(action: {
-                    self.isGotoLogin = true
-                }) {
-                    Text("<<すでにアカウントを持ちですか？")
                     
+                }) {
+                    Text("送信")
+                        .frame(width: UIScreen.main.bounds.width-paddingVale)
+                        .frame(height: lineHeight)
                 }
-                .foregroundColor(Color.blue)
+                .background(Color.blue)
+                .foregroundColor(Color.white)
+                .cornerRadius(lineHeight/2)
+                
                 Spacer()
-            }
-        }.padding(.top, 100).padding(paddingVale)
+                
+            }.padding(.top, 100).padding(paddingVale)
+            Spacer()
+        }
     }
 }
 
