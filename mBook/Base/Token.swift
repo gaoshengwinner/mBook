@@ -30,6 +30,27 @@ struct Token : Codable{
         _ = Keychain.save(key: Constants.KEY_CHAIN_TOKEN, data: data)
     }
     
+    static func refreshAccessToken(refreshTokenResult:RefreshTokenResult?) -> Void{
+        if refreshTokenResult == nil {
+            return
+        }
+        let currentDate = NSDate() as Date
+        let data = Keychain.load(key: Constants.KEY_CHAIN_TOKEN)
+        if data == nil {
+            return
+        }
+        var token = try! JSONDecoder().decode(Token.self, from: data!)
+        
+        token.accessToken = refreshTokenResult!.accessToken
+        token.accessTokenLimit = refreshTokenResult!.accessTokenLimit
+        token.accessTokenDate = currentDate
+        
+        let tokedata = try! JSONEncoder().encode(token)
+        _ = Keychain.save(key: Constants.KEY_CHAIN_TOKEN, data: tokedata)
+        
+    }
+    
+    
 //    static func updateAccessToken(){
 //
 //    }
@@ -42,20 +63,24 @@ struct Token : Codable{
         }
         let token = try! JSONDecoder().decode(Token.self, from: data!)
 
-        let limtDate = token.refressBeginDate.addingTimeInterval(TimeInterval(token.refreshTokenLimit!))
+        let limtDate = token.refressBeginDate.addingTimeInterval(TimeInterval(token.refreshTokenLimit!-60))
+        print("\(limtDate)")
+        print("\(currentDate)")
         return limtDate < currentDate
         ? nil :token.refreshToken
     }
     
     static func getAccessToken()->String?{
-        let currentDate = NSDate() as Date
+        let currentDateTime = Date()
         let data = Keychain.load(key: Constants.KEY_CHAIN_TOKEN)
         if data == nil {
             return nil
         }
         let token = try! JSONDecoder().decode(Token.self, from: data!)
 
-        return token.accessTokenDate.addingTimeInterval(TimeInterval(token.accessTokenLimit!)) > currentDate
+        let pashMinus = Int(currentDateTime.timeIntervalSince(token.accessTokenDate))
+        print("statusCode: \(String(describing: Int(token.accessTokenLimit!)))")
+        return pashMinus < Int(token.accessTokenLimit!)
         ?  token.accessToken :nil
     }
     

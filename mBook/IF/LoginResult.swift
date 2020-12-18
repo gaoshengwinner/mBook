@@ -19,7 +19,7 @@ struct LoginResult : Codable {
     var accessToken:String?
     var accessTokenLimit:CLong?
     
-    static func getAPIResult(data:Data) -> LoginResult?{
+    static func getLoginResult(data:Data) -> LoginResult?{
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         

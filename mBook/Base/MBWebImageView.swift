@@ -20,6 +20,7 @@ struct MBWebImageView: View {
             .placeholder(content: {
                 Color.gray
             })
+            .renderingMode(.original)
             .resizable()
             .scaledToFit()
             .clipped()
@@ -33,6 +34,7 @@ struct MBWebImageView_Previews: PreviewProvider {
                 HStack{
                     VStack{
                         MBWebImageView(imagUrl: "https://t1.hddhhn.com/uploads/tu/202007/7/3.jpg")
+                            
                         MBWebImageView(imagUrl: "https://t1.hddhhn.com/uploads/tu/202007/7/3.jpg")
                     }
                     VStack{

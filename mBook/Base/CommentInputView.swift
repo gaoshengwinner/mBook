@@ -15,9 +15,9 @@ struct CommentInputView: UIViewRepresentable {
     }
     func makeUIView(context: Context) -> UITextView {
         let view = UITextView()
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = Constants.inputBGC as UIColor
         view.font = .systemFont(ofSize: 18)
-        view.textContainerInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
+        //view.textContainerInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
         view.delegate = context.coordinator
         view.text = text
         return view

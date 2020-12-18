@@ -9,8 +9,9 @@
 import SwiftUI
 
 struct LoginView: View {
+    @EnvironmentObject var model: Model
     let loginheaderImage = "loginheader.jpg"
-    let mBQrcodeImage = "loginheader.jpg"
+    let mBQrcodeImage = "mb_qr.jpg"
     let paddingVale = CGFloat(20)
     let lineHeight = CGFloat(30)
     @State var username: String = ""
@@ -49,47 +50,32 @@ struct LoginView: View {
                 .resizable()
                 .scaledToFit()
             VStack(spacing:20){
-                VStack(spacing:0){
-                    TextField("メールアドレス", text: $username)
-                        .frame(height: lineHeight)
-                        .keyboardType(UIKeyboardType.asciiCapable)
-                    
-                    Rectangle()
-                        .frame(height: 1.0, alignment: .bottom)
-                        .foregroundColor(Color.blue)
-                    HStack{
-                        Text(self.errmsMeil).foregroundColor(.red)
-                        Spacer()
-                    }
-                }
-                VStack(spacing:0){
-                    SecureField("パスワード", text: $password)
-                        .frame(height: lineHeight)
-                    
-                    Rectangle()
-                        .frame(height: 1.0, alignment: .bottom)
-                        .foregroundColor(Color.blue)
-                    HStack{
-                        Text(self.errmsPSW).foregroundColor(.red)
-                        Spacer()
-                    }
-                }
+                TextField("メールアドレス", text: $username)
+                    .keyboardType(UIKeyboardType.asciiCapable)
+                .createInutText(errorValue: self.errmsMeil)
+                
+                SecureField("パスワード", text: $password)
+                               .createInutText(errorValue: self.errmsPSW)
+                
                 VStack(spacing:0){
                     Button(action: {
-                        APIHelper.login(memberEmail: self.username, memberPassword: self.password,ok:{loginResult in
+                        APIHelper.login(memberEmail: self.username, memberPassword: self.password,whenOK:{loginResult in
                             Token.createTokenKeyChain(lr: loginResult)
                             self.isCanGotoMain.toggle()
-                        },ng:{loginResult in
+                            DispatchQueue.main.async {
+                                self.model.beGotoLogin = false
+                            }
+                        },whenNG:{loginResult in
                             if loginResult == nil ||  loginResult!.errs == nil{
                                 self.errmsMeil = "※未知例外発生しました。"
                             } else {
                                 for err in loginResult!.errs! {
                                     if LoginResult.ERR_FIELD_MAIL == err.errField {
-                                        self.errmsMeil = "※" + err.msg
+                                        self.errmsMeil = "※" + err.msg!
                                     }
                                     
                                     if LoginResult.ERR_FIELD_PSW == err.errField {
-                                        self.errmsPSW = "※" + err.msg
+                                        self.errmsPSW = "※" + err.msg!
                                     }
                                 }
                             }

@@ -84,14 +84,14 @@ struct RegistView: View {
                     Button(action: {
                         let deviceId = DeviceHelper.getDeviceId()
                         print(deviceId)
-                        APIHelper.postRegistOK(code: self.conMailcode,ok:{
+                        APIHelper.postRegistOK(code: self.conMailcode,whenOK:{
                             self.isGotoLogin = true
-                        },ng: {result in
+                        },whenNG: {result in
                             if result == nil {
                                 self.errmsCode = "※予想外エラー"
                             } else {
-                                for err in result!.errs {
-                                    self.errmsCode = "※" + err.msg
+                                for err in result!.errs! {
+                                    self.errmsCode = "※" + err.msg!
                                 }
                             }
                         })
@@ -161,24 +161,24 @@ struct RegistView: View {
                     Button(action: {
                         let deviceId = DeviceHelper.getDeviceId()
                         print(deviceId)
-                        APIHelper.postRegist(username: self.username, password: self.password,ok: {
+                        APIHelper.postRegist(username: self.username, password: self.password,whenOK: {
                             self.errmsMeil = ""
                             self.errmsPSW = ""
                             self.isConfirmMail = true
                             
-                        },ng: {result in
+                        },whenNG: {result in
                             self.errmsMeil = ""
                             self.errmsPSW = ""
                             if result == nil {
                                 self.errmsMeil = "※ 予想外異常"
                             } else {
-                                for err in result!.errs {
+                                for err in result!.errs! {
                                     if APIResult.ERR_FIELD_MAIL == err.errField {
-                                        self.errmsMeil = "※" + err.msg
+                                        self.errmsMeil = "※" + err.msg!
                                     }
                                     
                                     if APIResult.ERR_FIELD_PSW == err.errField {
-                                        self.errmsPSW = "※" + err.msg
+                                        self.errmsPSW = "※" + err.msg!
                                     }
                                 }
                             }

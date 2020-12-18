@@ -16,16 +16,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
-        if Token.getRefreshToken() == nil {
-            let contentView = LoginView().environmentObject(PartialSheetManager()).environmentObject(Model())
-            
-            if let windowScene = scene as? UIWindowScene {
-                let window = UIWindow(windowScene: windowScene)
-                window.rootViewController = UIHostingController(rootView: contentView)
-                self.window = window
-                window.makeKeyAndVisible()
-            }
-        } else {
+//        if Token.getRefreshToken() == nil {
+//            let contentView = LoginView().environmentObject(PartialSheetManager()).environmentObject(Model())
+//
+//            if let windowScene = scene as? UIWindowScene {
+//                let window = UIWindow(windowScene: windowScene)
+//                window.rootViewController = UIHostingController(rootView: contentView)
+//                self.window = window
+//                window.makeKeyAndVisible()
+//            }
+//        } else {
+        
             let contentView = MainView().environmentObject(PartialSheetManager()).environmentObject(Model())
             
             if let windowScene = scene as? UIWindowScene {
@@ -34,7 +35,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 self.window = window
                 window.makeKeyAndVisible()
             }
-        }
+//        }
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {

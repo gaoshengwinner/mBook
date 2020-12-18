@@ -15,6 +15,8 @@ struct Constants {
     static let KEY_CHAIN_DEVICE_ID = APP_BASE + "KEY_CHAIN_DEVICE_ID"
     // KeyChainトークン
     static let KEY_CHAIN_TOKEN = APP_BASE + "KEY_CHAIN_TOKEN"
+    
+    static let inputBGC = (UIColor(red: 239.0/255.0, green: 243.0/255, blue: 244.0/255.0, alpha:1.0))
 }
 
 

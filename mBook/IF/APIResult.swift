@@ -13,8 +13,8 @@ struct APIResult: Codable {
     static let ERR_FIELD_MAIL = "memberEmail"
     static let ERR_FIELD_PSW = "memberPassword"
     
-    var statu:String = ""
-    var errs = Array<Errs>()
+    var statu:String?
+    var errs:[Errs]?
     
     static func getAPIResult(data:Data) -> APIResult{
         let decoder = JSONDecoder()
@@ -28,6 +28,6 @@ struct APIResult: Codable {
 }
 
 struct Errs : Codable{
-    var msg:String=""
-    var errField:String=""
+    var msg:String?
+    var errField:String?
 }
