@@ -22,194 +22,111 @@ struct MemoMBColorHStack:Identifiable{
 
 
 struct MBColorSelectorView: View {
-    @Binding var mbColor:MBColor
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @State var memos = [MemoMBColor]()
-    var onSelect:(_ colorSlider: MBColor)->Void
-    var example: some View{
-        VStack{
-            VStack{
-                Text("Hello Meel Book!")
-            }
-            .frame(width: UIScreen.main.bounds.width * 0.8, height: 30)
-            .background(Color.init(red: mbColor.red / 255, green: mbColor.green / 255, blue: mbColor.blue / 255, opacity: mbColor.opacity / 100))
-            .cornerRadius(.infinity)
-            
-            HStack{
-                VStack(alignment:HorizontalAlignment.leading){
-                    Text(String(format:"Red:%.0f,Green:%.0f,Blue:%.0f", mbColor.red,mbColor.green, mbColor.blue))
-                        .font(.body)
-                    Text(String(format:"Opacity:%.0f", mbColor.opacity))
-                        .font(.body)
-                }
-                .foregroundColor(Color.init(red: mbColor.red / 255, green: mbColor.green / 255, blue: mbColor.blue / 255, opacity: mbColor.opacity / 100))
+    @Binding var manaColor:ManaColor
+    @State var manaColorList: [ManaColor]
+    @State var checked:[Bool]
+    @State var last:Int
+    @State var isInet = true
+    @State var beChange = false
+    var onSelect:(_ manaColor: ManaColor)->Void
+    init(_ manaColor: Binding<ManaColor>, _ manaColorList:[ManaColor] ,onSelect:@escaping (_ manaColor: ManaColor)->Void) {
+        self._manaColor = manaColor
+        var checkedInit = [Bool]()
+        var beSetting = false
+        for i in 0..<manaColorList.count {
+            if manaColor.wrappedValue.id == manaColorList[i].id {
+                checkedInit.append(true)
+                beSetting = true
+            } else {
+                checkedInit.append(false)
             }
         }
-    }
-    
-    var cont: some View {
-        VStack(alignment:.trailing, spacing: 0){
-            Divider()
-            HStack{
-                Text("R").foregroundColor(.red).onTapGesture {
-                    if self.mbColor.red > 1{self.mbColor.red = self.mbColor.red - 1}
-                }
-                Slider(value: $mbColor.red, in: 0...255, step: 1)
-                    .frame(width:UIScreen.main.bounds.width*0.55)
-                Text("255").foregroundColor(.red).onTapGesture {
-                    if self.mbColor.red < 255 {self.mbColor.red = self.mbColor.red + 1}
-                }
-            }
-            HStack{
-                Text("G").foregroundColor(.green).onTapGesture {
-                    if self.mbColor.green > 1 {self.mbColor.green = self.mbColor.green - 1}
-                }
-                Slider(value: $mbColor.green, in: 0...255, step: 1)
-                    .frame(width:UIScreen.main.bounds.width*0.55)
-                Text("255").foregroundColor(.green).onTapGesture {
-                    if self.mbColor.green < 255{ self.mbColor.green = self.mbColor.green + 1}
-                }
-            }
-            HStack{
-                Text("B").foregroundColor(.blue).onTapGesture {
-                    if self.mbColor.blue > 1 {self.mbColor.blue = self.mbColor.blue - 1}
-                }
-                Slider(value: $mbColor.blue, in: 0...255, step: 1)
-                    .frame(width:UIScreen.main.bounds.width*0.55)
-                Text("255").foregroundColor(.blue).onTapGesture {
-                    if self.mbColor.blue < 255 {self.mbColor.blue = self.mbColor.blue + 1}
-                }
-            }
-            HStack{
-                Text("O").onTapGesture {
-                    if self.mbColor.opacity > 1 {self.mbColor.opacity = self.mbColor.opacity - 1}
-                }
-                Slider(value: $mbColor.opacity, in: 0...100, step: 1)
-                    .frame(width:UIScreen.main.bounds.width*0.55)
-                Text("100").onTapGesture {
-                    if self.mbColor.opacity < 100 {self.mbColor.opacity = self.mbColor.opacity + 1}
-                }
-            }
-        }.padding()
-    }
-    static let dispCount = 4
-    @State var title:String=""
-    @State var keyBordvalue:CGFloat=0
-    @State var allMemos = [MemoMBColorHStack]()
-    let circleR = (UIScreen.main.bounds.width - 51.0) / CGFloat(dispCount + 1)
-    var memo: some View {
-        ZStack{
-            VStack{
-                ScrollView{
-                    self.memolistView
-                    Spacer()
-                }
-            }
-            
-            VStack{
-                Spacer()
-                
-                HStack(alignment: .bottom){
-                    TextField("色のメモ名", text: $title)
-                        
-                        .setTextFieldStyle()
-                        .foregroundColor(Color.black)
-                    Spacer()
-                    Button (action:{
-                        self.memos.append(MemoMBColor(title:self.title,color: MBColor(red: self.mbColor.red, green: self.mbColor.green, blue: self.mbColor.blue, opacity: self.mbColor.opacity)))
-                        self.title = ""
-                        self.allMemos = self.getAllMemos()
-                        // 键盘收起
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                        
-                    } ) {
-                        Image(systemName: "plus.circle.fill").foregroundColor(title.isEmpty ?  .gray :.blue)
-                            .font(.largeTitle)
-                    }
-                    .disabled(title.isEmpty)
-                }.background(Color.init(red: 220, green: 220, blue: 220, opacity: 1))
-            }
-            
-        }
-    }
-    
-    var memolistView :some View {
-        Group{
-            ForEach (self.allMemos, id:\.id) { submemos in
-                VStack(alignment: .leading,spacing:0){
-                    HStack(alignment:.top, spacing:0){
-                        ForEach (submemos.memoColorSlider, id:\.id) { memo in
-                            VStack(spacing:0){
-                                Circle()
-                                    .fill(Color.init(red: memo.color.red / 255, green: memo.color.green / 255, blue: memo.color.blue / 255, opacity: memo.color.opacity / 100))
-                                    .frame(width:self.circleR,height: self.circleR)
-                                    .padding(0)
-                                Text(memo.title) .font(.system(size: 20))
-                                    .foregroundColor(Color.black)
-                                    .padding(0)
-                            }.padding(5)
-                            .onTapGesture(){
-                                self.mbColor = memo.color
-                            }
-                            .onLongPressGesture {
-                                self.removeMemo(memo:memo)
-                            }
-                            
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func getAllMemos() -> Array<MemoMBColorHStack> {
-        // 计算表示行数
-        var allMemos = Array<MemoMBColorHStack>()
-        var i = 0, j = 0
-        var subMemos = MemoMBColorHStack()
+        self._last = State(initialValue: manaColorList.count)
         
-        for m in self.memos {
-            subMemos.memoColorSlider.append(m)
-            j = j + 1
-            i = i + 1
-            if i > MBColorSelectorView.dispCount || j >= self.memos.count {
-                i = 0
-                allMemos.append(subMemos)
-                subMemos = MemoMBColorHStack()
-            }
-        }
-        return allMemos
-    }
-    
-    func removeMemo(memo:MemoMBColor){
-        for i in 0..<self.memos.count {
-            if self.memos[i].id == memo.id {
-                self.memos.remove(at: i)
-                break
-            }
-            
-        }
-        self.allMemos = self.getAllMemos()
+        checkedInit.append(!beSetting)
+        self._checked = State(initialValue: checkedInit)
+        
+        
+        self._manaColorList = State(wrappedValue: manaColorList)
+        self.onSelect = onSelect
     }
     var body: some View {
-        VStack{
-            example
-            cont
-            HStack(alignment:.center){
-                Text("OK").setStyleToLikeButton(width: 0.4)
+        
+        return VStack{
+            Text(String(format:"R:%.0f,G:%.0f,B:%.0f,O:%.0f", manaColor.mbColor.red,manaColor.mbColor.green, manaColor.mbColor.blue, manaColor.mbColor.opacity))
+                .foregroundColor(.black)
+                .background(self.manaColor.mbColor.toColor())
+                .font(.body)
+                .onChange(of: self.manaColor.mbColor, perform: { value in
+                    onSelect(self.manaColor)
+                })
+            List{
+                
+                HStack{
+                    Text("Once color")
+                        .foregroundColor(Color(.black))
+                    ColorSelectorView(mbColor: $manaColor.mbColor, beChange: $beChange)
+                        
+                    Spacer()
+                    Toggle(isOn: $checked[self.last], label: {
+                        Text("")
+                    })
                     .onTapGesture {
-                        self.presentationMode.wrappedValue.dismiss()
-                        self.onSelect(self.mbColor)
+                        setToggleState(self.last)
                     }
-            }.padding(.top)
-            self.memo
-            Spacer()
-        }.padding()
-        .onTapGesture {
-            // 键盘收起
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }
+                //Picker("Predefined Color", selection: $numberOfPeople) {
+                ForEach(0..<self.manaColorList.count) {colorI in
+                    HStack{
+                        self.manaColorList[colorI].mbColor.toColor()
+                            .clipShape(Circle())
+                            .frame(width: 30, height: 30)
+                            .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                        
+                        Text("\(self.manaColorList[colorI].id!):\(self.manaColorList[colorI].name)"
+                        ).foregroundColor(Color(.black))
+                        
+                        
+                        Spacer()
+                        
+                        Toggle(isOn: $checked[colorI], label: {
+                            Text("")
+                        })
+                        .onTapGesture {
+                            setToggleState(colorI)
+                        }
+                        
+                        
+                    }
+                }
+            }
+            .font(.system(size: 18))
         }
         
+        
+    }
+    
+    func setToggleState(_ colorI:Int){
+        beChange = true
+        if !self.checked[colorI] {
+            for i in 0..<self.checked.count {
+                if (i != colorI) {
+                    self.checked[i] = false
+                }
+            }
+            if colorI < self.last {
+                manaColor = self.manaColorList[colorI]
+                manaColor.mbColor.red = self.manaColorList[colorI].mbColor.red
+                manaColor.mbColor.blue = self.manaColorList[colorI].mbColor.blue
+                manaColor.mbColor.green = self.manaColorList[colorI].mbColor.green
+                manaColor.mbColor.opacity = self.manaColorList[colorI].mbColor.opacity
+            } else {
+                manaColor.id = nil
+                manaColor.name = ""
+            }
+        } else {
+            self.checked[colorI] = true
+        }
     }
 }
 

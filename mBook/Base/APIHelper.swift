@@ -12,7 +12,7 @@ enum HttpMethod :String {
     case GET = "GET"
 }
 public class APIHelper {
-    static let BASE_API_URL = "http://5c40cacfd57d.ngrok.io"
+    static let BASE_API_URL = "http://443dfd476d6c.ngrok.io"
     
     static let CONTENT_TYPE = "application/json; charset=utf-8"
     static let MB_DEVICE_INFOR_HEADER = "MB_DEVICE_INFOR_HEADER"
@@ -41,6 +41,8 @@ public class APIHelper {
             } else {
                 whenNG(APIResult.getAPIResult(data:data!))
             }
+        }, whenTokenNG: {_,_ in
+            
         })
         
     }
@@ -64,6 +66,7 @@ public class APIHelper {
             } else {
                 whenNG(APIResult.getAPIResult(data:data!))
             }
+        }, whenTokenNG: {_,_ in
         })
     }
     
@@ -92,6 +95,8 @@ public class APIHelper {
                     whenNG(nil)
                 }
             }
+        }, whenTokenNG: {_,_ in
+            
         })
         
         
@@ -101,7 +106,8 @@ public class APIHelper {
                       body:Data?,
                       accessToken:String?,
                       whenOK:@escaping(_ responsData:Data?,_ statusCode: Int)->Void,
-                      whenNG:@escaping(_ responsData:Data?, _ error:String?, _ statusCode: Int)->Void)->Void{
+                      whenNG:@escaping(_ responsData:Data?, _ error:String?, _ statusCode: Int)->Void,
+                      whenTokenNG:@escaping(_ isNotRefreshToken:Bool, _ msg:String)->Void)->Void{
         
         var request = URLRequest(url: url)
         request.setValue(CONTENT_TYPE, forHTTPHeaderField: "Content-Type")
@@ -113,6 +119,9 @@ public class APIHelper {
         
         session.dataTask(with: request) { (data, response, error) in
             if error == nil, let data = data, let response = response as? HTTPURLResponse {
+                if response.statusCode == 401 {
+                    whenTokenNG(true, "accessToken is not good")
+                }
                 print("url:\(url),statusCode: \(response.statusCode)")
                 // HTTPステータスコード
                 print(String(data: data, encoding: String.Encoding.utf8) ?? "")
@@ -187,17 +196,18 @@ public class APIHelper {
             
             let url = URL(string: BASE_API_URL + "/v1/api/manag/shopInfo")
             
-            doApi(url: url!, method: HttpMethod.GET, body: nil, accessToken: accessToken, whenOK: { (data, statu) in
+            doApi(url: url!, method: HttpMethod.GET, body: nil, accessToken: accessToken) { (data, statu) in
                 if statu != 200 {
                     whenNG("statu:\(statu)")
                 } else {
                     whenOK(ShopInfo.getShopInfo(data: data!))
                 }
-            }) { (data, err, statu) in
+            } whenNG: { (data, err, statu) in
                 whenNG("data:\(String(describing: data)),err:\(String(describing: err)),statu:\(String(describing: statu))")
+            } whenTokenNG: { (reLogin, msg) in
+                whenTokenNG(reLogin,msg)
             }
-            
-            
+
         }, whenTokenNG: whenTokenNG)
     }
     
@@ -207,20 +217,19 @@ public class APIHelper {
                                 whenTokenNG:@escaping(_ isNotRefreshToken:Bool, _ msg:String)->Void)->Void{
         getAccessToken(whenOK: { (accessToken) in
             
-            
             let url = URL(string: BASE_API_URL + "/v1/api/manag/shopItemInfo")
             
-            doApi(url: url!, method: HttpMethod.GET, body: nil, accessToken: accessToken, whenOK: { (data, statu) in
+            doApi(url: url!, method: HttpMethod.GET, body: nil, accessToken: accessToken) { (data, statu) in
                 if statu != 200 {
                     whenNG(false,"statu:\(statu)")
                 } else {
                     whenOK(ItemDetail.getItemDetail(data: data!))
                 }
-            }) { (data, err, statu) in
+            } whenNG: { (data, err, statu) in
                 whenNG(false, "data:\(String(describing: data)),err:\(String(describing: err)),statu:\(String(describing: statu))")
+            } whenTokenNG: { (reLogin, msg) in
+                whenTokenNG(reLogin,msg)
             }
-            
-            
         },whenTokenNG:whenTokenNG)
     }
     
@@ -234,15 +243,18 @@ public class APIHelper {
             let data = CMF.obToData(shopInfo)
             let url = URL(string: BASE_API_URL + "/v1/api/manag/save_shopInfo")
             
-            doApi(url:url!, method: HttpMethod.POST, body:data, accessToken: accessToken, whenOK: { data, statusCode in
+            doApi(url: url!, method: HttpMethod.POST, body: data, accessToken: accessToken) { data, statusCode in
                 whenOK()
-            },whenNG: { data, error,statusCode  in
+            } whenNG: { data, error,statusCode  in
                 if data == nil{
                     whenNG(nil)
                 } else {
                     whenNG(APIResult.getAPIResult(data:data!))
                 }
-            })
+            } whenTokenNG: { (reLogin, msg) in
+                whenTokenNG(reLogin,msg)
+            
+            }
         },whenTokenNG:whenTokenNG)
     }
     
@@ -253,12 +265,14 @@ public class APIHelper {
         getAccessToken(whenOK: { (accessToken) in
             let data = CMF.obToData(items)
             let url = URL(string: BASE_API_URL + "/v1/api/manag/save_shopItemInfo")
-            
-            doApi(url:url!, method: HttpMethod.POST, body:data, accessToken: accessToken, whenOK: { data, statusCode in
+            doApi(url: url!, method: HttpMethod.POST, body: data, accessToken: accessToken) { data, statusCode in
                 whenOK()
-            },whenNG: { data, error,statusCode  in
+            } whenNG: { data, error,statusCode  in
                 whenNG()
-            })
+            } whenTokenNG: { (reLogin, msg) in
+                whenTokenNG(reLogin,msg)
+            
+            }
         },whenTokenNG:whenTokenNG)
     }
     static func saveShopItemInfoRow(item:ItemDetail,
@@ -271,32 +285,36 @@ public class APIHelper {
             let data = CMF.obToData(item)
             let url = URL(string: BASE_API_URL + "/v1/api/manag/shopItemInfoRow")
             
-            doApi(url:url!, method: HttpMethod.POST, body:data, accessToken: accessToken, whenOK: { data, statusCode in
+            doApi(url: url!, method: HttpMethod.POST, body: data, accessToken: accessToken) { data, statusCode in
                 whenOK()
-            },whenNG: { data, error,statusCode  in
+            } whenNG: { data, error,statusCode  in
                 whenNG()
-            })
+            } whenTokenNG: { (reLogin, msg) in
+                whenTokenNG(reLogin,msg)
+            
+            }
+
         },whenTokenNG:whenTokenNG)
     }
     
     
-//    
-//    static func getShopInfo(shopID:String ,ok:@escaping(_ shopInfoResult:ShopInfoResult)->Void,ng:@escaping(_ error: String?)->Void) {
-//        
-//        let url = URL(string: BASE_API_URL + "/v1/api/shop/" + shopID)
-//        
-//        doApi(url:url!, method: HttpMethod.POST, body:nil, accessToken: nil, whenOK: { data, statusCode in
-//            let result = ShopInfoResult.getShopInfoResult(data:data!)
-//            ok(result!);
-//        },whenNG: { data, error,statusCode  in
-//            if data == nil{
-//                ng(nil)
-//            } else {
-//                ng("通信エラー")
-//            }
-//        })
-//        
-//    }
+    //
+    //    static func getShopInfo(shopID:String ,ok:@escaping(_ shopInfoResult:ShopInfoResult)->Void,ng:@escaping(_ error: String?)->Void) {
+    //
+    //        let url = URL(string: BASE_API_URL + "/v1/api/shop/" + shopID)
+    //
+    //        doApi(url:url!, method: HttpMethod.POST, body:nil, accessToken: nil, whenOK: { data, statusCode in
+    //            let result = ShopInfoResult.getShopInfoResult(data:data!)
+    //            ok(result!);
+    //        },whenNG: { data, error,statusCode  in
+    //            if data == nil{
+    //                ng(nil)
+    //            } else {
+    //                ng("通信エラー")
+    //            }
+    //        })
+    //
+    //    }
     static func getManaColorInfoList(
         whenOK:@escaping(_ manaColor:[ManaColor]?)->Void,
         whenNG:@escaping(_ msg:String)->Void,
@@ -305,21 +323,76 @@ public class APIHelper {
             
             
             let url = URL(string: BASE_API_URL + "/v1/api/manag/manaColorInfo")
-            
-            doApi(url: url!, method: HttpMethod.GET, body: nil, accessToken: accessToken, whenOK: { (data, statu) in
+            doApi(url: url!, method: HttpMethod.GET, body: nil, accessToken: accessToken) { (data, statu) in
                 if statu != 200 {
                     whenNG("statu:\(String(describing: statu))")
                 } else {
-                    whenOK(ManaColor.getManaColor(data: data!))
+                    let appcom = ApiResultCommon<ManaColor>()
+                    let result = appcom.getApiResultCommon(data: data!)
+                    
+                    whenOK(result.result)
                 }
-            }) { (data, err, statu) in
+            } whenNG: { (data, err, statu) in
                 whenNG("data:\(String(describing: data)),err:\(String(describing: err)),statu:\(String(describing: statu))")
-            }
+            } whenTokenNG: { (reLogin, msg) in
+                whenTokenNG(reLogin,msg)
             
+            }
             
         },whenTokenNG:whenTokenNG)
     }
     
+    
+    static func saveManaColor(manaColor:ManaColor,
+                       whenOK:@escaping(_ manaColor:[ManaColor]?)->Void,
+                       whenNG:@escaping(_ msg:String)->Void,
+                       whenTokenNG:@escaping(_ isNotRefreshToken:Bool, _ msg:String)->Void)->Void {
+        getAccessToken( whenOK: { (accessToken) in
+            
+            
+            let data = CMF.obToData(manaColor)
+            let url = URL(string: BASE_API_URL + "/v1/api/manag/save_manaColorInfo")
+            doApi(url: url!, method: HttpMethod.POST, body: data, accessToken: accessToken) {  (data, statu) in
+                if statu != 200 {
+                    whenNG("statu:\(String(describing: statu))")
+                } else {
+                    let appcom = ApiResultCommon<ManaColor>()
+                    let result = appcom.getApiResultCommon(data: data!)
+                    
+                    whenOK(result.result)
+                }
+            } whenNG: { data, err,statu  in
+                whenNG("data:\(String(describing: data)),err:\(String(describing: err)),statu:\(String(describing: statu))")
+            } whenTokenNG: { (reLogin, msg) in
+                whenTokenNG(reLogin,msg)
+            }
+
+        },whenTokenNG:whenTokenNG)
+    }
+    
+    static func deleteManaColor(manaColor:ManaColor,
+                       whenOK:@escaping()->Void,
+                       whenNG:@escaping(_ msg:String)->Void,
+                       whenTokenNG:@escaping(_ isNotRefreshToken:Bool, _ msg:String)->Void)->Void {
+        getAccessToken( whenOK: { (accessToken) in
+            
+            
+            let data = CMF.obToData(manaColor)
+            let url = URL(string: BASE_API_URL + "/v1/api/manag/delete_manaColorInfo")
+            doApi(url: url!, method: HttpMethod.POST, body: data, accessToken: accessToken) {  (data, statu) in
+                if statu != 200 {
+                    whenNG("statu:\(String(describing: statu))")
+                } else {
+                    whenOK()
+                }
+            } whenNG: { data, err,statu  in
+                whenNG("data:\(String(describing: data)),err:\(String(describing: err)),statu:\(String(describing: statu))")
+            } whenTokenNG: { (reLogin, msg) in
+                whenTokenNG(reLogin,msg)
+            }
+
+        },whenTokenNG:whenTokenNG)
+    }
 }
 
 enum RequestError :Error {

@@ -17,6 +17,20 @@ public class Model: ObservableObject {
     
     @Published var shopInfo = ShopInfo()
     
+    @Published var manaColorList = [ManaColor]()
+    
+    func freshManaColorInfoList()->Void{
+        APIHelper.getManaColorInfoList(whenOK: {(result) in
+            DispatchQueue.main.async{
+                self.manaColorList = result ?? [ManaColor]()
+            }
+        }, whenNG: {_ in
+            // TODO
+        }, whenTokenNG: {_,_ in
+            // TODO
+        })
+    }
+    
     func initShopInfo(onComplit:@escaping ()->Void){
         APIHelper.getShopInfo(whenOK: {shopInfo in
                         DispatchQueue.main.async{
@@ -41,7 +55,6 @@ public class Model: ObservableObject {
                 self.items = items ?? [ItemDetail]()
                 onComplit()
             }
-            
         }, whenNG: {_,_ in
             // TODO
         }, whenTokenNG: {beGotoLogin,msg in
@@ -51,8 +64,6 @@ public class Model: ObservableObject {
                 }
             }
         })
-        
-        
     }
     
 }

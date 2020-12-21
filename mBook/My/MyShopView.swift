@@ -64,6 +64,9 @@ struct MyShopView: View {
                 self.itemInfoLoaded=true
                 self.loading = !(self.shopInfoLoaded && self.itemInfoLoaded)
             }
+            self.model.freshManaColorInfoList()
+            
+            
         }.setLoadingView(isPresented: $loading)
     }
 }

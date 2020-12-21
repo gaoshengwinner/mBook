@@ -15,6 +15,7 @@ enum EditView{
 struct MyItemPreviewView: View {
     @EnvironmentObject var partialSheet : PartialSheetManager
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var model: Model
     
     @State var itemAllPropertyInfoUp = false
     @State var itemAddTextUp = false
@@ -23,7 +24,7 @@ struct MyItemPreviewView: View {
     // 商品詳細画面全体属性
     @State var itemAllPropertyInfo = [String: String]()
     @State var editeView:EditView = .itemAllPropertyInfo
-    @State var mbColor:MBColor = MBColor()
+    @State var manaColor:ManaColor = ManaColor()
     
     // 文字追加
     @State var itemAddTextTarger = false
@@ -42,7 +43,7 @@ struct MyItemPreviewView: View {
         .padding()
         .addPartialSheet()
         .onAppear(){
-            self.mbColor = ItemDispDetail.getItemDispDetail(itemDispDetail: item.itemDispDetail).getBCColor()
+            self.manaColor.mbColor = ItemDispDetail.getItemDispDetail(itemDispDetail: item.itemDispDetail).getBCColor()
             self.itemAllPropertyInfo = ItemDispDetail.getItemDispDetail(itemDispDetail: item.itemDispDetail).itemAllPropertyInfo ?? [String:String]()
         }
     }
@@ -56,10 +57,10 @@ struct MyItemPreviewView: View {
                         .setImageToButton(action: {
                             self.itemAllPropertyInfoUp.toggle()
                         })
-                        .setMBColorWithSheet(isPresented: $itemAllPropertyInfoUp, mbColor: self.$mbColor, onSelect: { sr in
-                            self.itemAllPropertyInfo[MenuCon.ITEM_ALL_PROPERTY_BC_COLOR_VALUE] = String(format: "%.0f,%.0f,%.0f,%.0f", sr.red,sr.green,sr.blue,sr.opacity)
+                        .setMBColorWithSheet(isPresented: $itemAllPropertyInfoUp, model: model, manaColor: self.$manaColor, onSelect: { manaColor in
+                            self.itemAllPropertyInfo[MenuCon.ITEM_ALL_PROPERTY_BC_COLOR_VALUE] = String(format: "%.0f,%.0f,%.0f,%.0f", manaColor.mbColor.red,manaColor.mbColor.green,manaColor.mbColor.blue,manaColor.mbColor.opacity)
                             let dispdetail = ItemDispDetail.getItemDispDetail(itemDispDetail: item.itemDispDetail)
-                            dispdetail.setBCColor(color: sr)
+                            dispdetail.setBCColor(color: manaColor.mbColor)
                             item.itemDispDetail = dispdetail.getJsonString()
                             
                         })

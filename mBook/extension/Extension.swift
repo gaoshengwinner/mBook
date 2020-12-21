@@ -65,7 +65,7 @@ public extension View {
     func setTextFieldStyle()-> some View{
         self.background(Color(red: 239.0/255.0, green: 243.0/255, blue: 244.0/255.0, opacity:1.0))
             .font(.system(size: 20))
-            .frame(height:35)
+            .frame(height:50)
     }
     
     func setVStackToTop()->some View{

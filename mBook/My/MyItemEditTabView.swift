@@ -21,10 +21,12 @@ struct MyItemEditTabView: View {
                         .font(.largeTitle)
             }
             MyItemPreviewView(item: self.$model.items[self.itemIndex])
+                .environmentObject(model)
                 .tabItem {
                     Image(systemName: "eyeglasses")
                         .font(.largeTitle)
             }
+                
         }.navigationBarItems(trailing:
             Button(action: save, label: {
                 Image(systemName: "checkmark.rectangle").font(.largeTitle).foregroundColor(.blue)

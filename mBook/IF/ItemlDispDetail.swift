@@ -9,7 +9,7 @@
 import SwiftUI
 
 
-public struct MBColor:Codable{
+public struct MBColor:Codable, Equatable{
     var red:Double = 0
     var green:Double  = 0
     var blue:Double  = 0

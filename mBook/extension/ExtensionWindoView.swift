@@ -15,10 +15,16 @@ public extension View{
             MBFontSizeSelectorView(textFontSize: textFontSize, onSelect: onSelect)
         }
     }
-    func setMBColorWithSheet(isPresented:Binding<Bool> , mbColor:Binding<MBColor>, onSelect:@escaping (_ mbColor: MBColor)->Void) -> some View {
+    func setMBColorWithSheet(isPresented:Binding<Bool> ,
+                             model:Model,
+                             manaColor:Binding<ManaColor>, onSelect:@escaping (_ manaColor: ManaColor)->Void) -> some View {
+        
         self
             .sheet(isPresented: isPresented) {
-                MBColorSelectorView(mbColor: mbColor, onSelect: onSelect)
+                MBColorSelectorView(manaColor, model.manaColorList, onSelect: { manaColor in
+                    onSelect(manaColor)
+                })
+                    .environmentObject(model)
             }
     }
     

@@ -19,6 +19,7 @@
 		9F27618224A5E53F00D96C3E /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F27618124A5E53F00D96C3E /* MainView.swift */; };
 		9F27618624AAF4B100D96C3E /* KeyChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F27618524AAF4B100D96C3E /* KeyChain.swift */; };
 		9F3F1F612509F91900AC8B62 /* MBFontSizeSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3F1F602509F91800AC8B62 /* MBFontSizeSelectorView.swift */; };
+		9F3F61BB258DCAB7000F367B /* ApiResultCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3F61BA258DCAB7000F367B /* ApiResultCommon.swift */; };
 		9F43AE6024AB001600866A11 /* MBDeviceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F43AE5F24AB001600866A11 /* MBDeviceData.swift */; };
 		9F43AE6224AEDF1B00866A11 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F43AE6124AEDF1B00866A11 /* Constants.swift */; };
 		9F43AE6624AEE16100866A11 /* DeviceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F43AE6524AEE16100866A11 /* DeviceHelper.swift */; };
@@ -72,7 +73,6 @@
 		9FF1F87024C5DA9500D90B53 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1F86F24C5DA9500D90B53 /* Model.swift */; };
 		9FF3CBF824F0C65700BE96D7 /* ExtensionWindoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF3CBF724F0C65700BE96D7 /* ExtensionWindoView.swift */; };
 		9FF6DCD524E67166009EBA70 /* MBTextAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF6DCD424E67166009EBA70 /* MBTextAddView.swift */; };
-		9FFE8FD525876FB5001FD2A7 /* ColorPickerTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE8FD425876FB5001FD2A7 /* ColorPickerTestView.swift */; };
 		9FFE8FD8258A2B4B001FD2A7 /* ExtensionColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE8FD7258A2B4B001FD2A7 /* ExtensionColor.swift */; };
 		9FFE8FDD258C7C3A001FD2A7 /* ManaColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE8FDC258C7C3A001FD2A7 /* ManaColor.swift */; };
 /* End PBXBuildFile section */
@@ -88,6 +88,7 @@
 		9F27618124A5E53F00D96C3E /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		9F27618524AAF4B100D96C3E /* KeyChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChain.swift; sourceTree = "<group>"; };
 		9F3F1F602509F91800AC8B62 /* MBFontSizeSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MBFontSizeSelectorView.swift; sourceTree = "<group>"; };
+		9F3F61BA258DCAB7000F367B /* ApiResultCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiResultCommon.swift; sourceTree = "<group>"; };
 		9F43AE5F24AB001600866A11 /* MBDeviceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MBDeviceData.swift; sourceTree = "<group>"; };
 		9F43AE6124AEDF1B00866A11 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9F43AE6524AEE16100866A11 /* DeviceHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHelper.swift; sourceTree = "<group>"; };
@@ -142,7 +143,6 @@
 		9FF1F86F24C5DA9500D90B53 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		9FF3CBF724F0C65700BE96D7 /* ExtensionWindoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionWindoView.swift; sourceTree = "<group>"; };
 		9FF6DCD424E67166009EBA70 /* MBTextAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MBTextAddView.swift; sourceTree = "<group>"; };
-		9FFE8FD425876FB5001FD2A7 /* ColorPickerTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerTestView.swift; sourceTree = "<group>"; };
 		9FFE8FD7258A2B4B001FD2A7 /* ExtensionColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionColor.swift; sourceTree = "<group>"; };
 		9FFE8FDC258C7C3A001FD2A7 /* ManaColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManaColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -257,7 +257,6 @@
 				9FC54A0E24FA0C9200C8C1F8 /* LoadingView.swift */,
 				9F3F1F602509F91800AC8B62 /* MBFontSizeSelectorView.swift */,
 				9F8F9A6B254D3FED0031D907 /* ColorManaView.swift */,
-				9FFE8FD425876FB5001FD2A7 /* ColorPickerTestView.swift */,
 			);
 			path = Comps;
 			sourceTree = "<group>";
@@ -273,6 +272,7 @@
 				9FD9159924D6BAF900923704 /* ItemDetail.swift */,
 				9FCFB1AA24F4990000569550 /* ItemlDispDetail.swift */,
 				9FFE8FDC258C7C3A001FD2A7 /* ManaColor.swift */,
+				9F3F61BA258DCAB7000F367B /* ApiResultCommon.swift */,
 			);
 			path = IF;
 			sourceTree = "<group>";
@@ -412,7 +412,6 @@
 				9F95C68824D458DA007C8378 /* Extension.swift in Sources */,
 				9F23891D24C85F0500436F45 /* DocFileManager.swift in Sources */,
 				9F93991024C7410500925282 /* TestView.swift in Sources */,
-				9FFE8FD525876FB5001FD2A7 /* ColorPickerTestView.swift in Sources */,
 				9F58F93D24B05C7700E1A937 /* APIHelper.swift in Sources */,
 				9FD9159A24D6BAF900923704 /* ItemDetail.swift in Sources */,
 				9F4EA31824DE6A9E002659A0 /* MBColorSelectorView.swift in Sources */,
@@ -442,6 +441,7 @@
 				9FF6DCD524E67166009EBA70 /* MBTextAddView.swift in Sources */,
 				9F3F1F612509F91900AC8B62 /* MBFontSizeSelectorView.swift in Sources */,
 				9FFE8FDD258C7C3A001FD2A7 /* ManaColor.swift in Sources */,
+				9F3F61BB258DCAB7000F367B /* ApiResultCommon.swift in Sources */,
 				9FD9159C24DB86C000923704 /* MyItemEditTabView.swift in Sources */,
 				9FF1F87024C5DA9500D90B53 /* Model.swift in Sources */,
 				9FE1EC4324B8AD3200F8353F /* ShopTabView.swift in Sources */,
@@ -607,6 +607,7 @@
 				DEVELOPMENT_TEAM = WUA3WK8AU7;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = mBook/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -627,6 +628,7 @@
 				DEVELOPMENT_TEAM = WUA3WK8AU7;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = mBook/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

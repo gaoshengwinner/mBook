@@ -66,8 +66,9 @@ struct MBTextAddView: View {
     @State var addTarger = false
     @State var textJustfyUp = false
     @State var grounfColorUp = false
-    @State var mbColor:MBColor = MBColor()
+    @State var manaColor:ManaColor = ManaColor()
     
+    @EnvironmentObject var model: Model
     @State var textFontSizeUp = false
     @State var textFontSize:CGFloat = 20
     var menubar : some View {
@@ -102,11 +103,11 @@ struct MBTextAddView: View {
                 Group{
                     Image(systemName: "paintbrush")
                         .onTapGesture {
-                            self.mbColor = self.hDetail.textBackgroudColor
+                            self.manaColor.mbColor = self.hDetail.textBackgroudColor
                             self.grounfColorUp.toggle()
                         }
-                        .setMBColorWithSheet(isPresented: self.$grounfColorUp, mbColor: self.$mbColor, onSelect: { sr in
-                            self.hDetail.textBackgroudColor = sr
+                        .setMBColorWithSheet(isPresented: self.$grounfColorUp, model: model, manaColor: self.$manaColor, onSelect: { manaColor in
+                            self.hDetail.textBackgroudColor = manaColor.mbColor
                         })
                     Spacer()
                     Image(systemName: "textformat.size")
